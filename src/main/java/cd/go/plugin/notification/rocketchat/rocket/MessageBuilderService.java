@@ -8,9 +8,11 @@ import com.github.baloise.rocketchatrestclient.model.Attachment;
 import com.github.baloise.rocketchatrestclient.model.AttachmentField;
 import com.github.baloise.rocketchatrestclient.model.Message;
 import com.thoughtworks.go.plugin.api.logging.Logger;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static java.text.MessageFormat.format;
@@ -23,22 +25,42 @@ public class MessageBuilderService {
     private static final String STAGE_STATE_CANCELLED = "Cancelled";
     private static final String STAGE_STATE_BUILDING = "Building";
 
+    private static final String DEFAULT_WHITELIST = "";
+
     public Message onStageStatusChanged(PluginRequest pluginRequest, StageStatusRequest.Pipeline pipeline) {
         // The request.pipeline object has all the details about the pipeline, materials, stages and jobs
-        if(pipeline.stage.state.equals(STAGE_STATE_FAILED)) {
-            return onStageFailed(pipeline, pluginRequest);
-        }
-        else if(pipeline.stage.state.equals(STAGE_STATE_PASSED)) {
-            return onStagePassed(pipeline);
-        }
-        else if(pipeline.stage.state.equals(STAGE_STATE_BUILDING)) {
-            return onStageBuilding(pipeline);
-        }
-        else if(pipeline.stage.state.equals(STAGE_STATE_CANCELLED)) {
-            return onStageCancelled(pipeline);
+        if(pipelineInWhitelist(pipeline, pluginRequest)) {
+            return onStageChanged(pipeline, pluginRequest);
         }
         LOG.warn(format("Skipping message processing for stage {0}/{1} because stage state is unknown - {2}", pipeline.name, pipeline.stage.name, pipeline.stage.state));
         return null;
+    }
+
+    private Boolean pipelineInWhitelist(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
+        String whitelist = getPipelinesWhitelist(pluginRequest, pipeline);
+        if (whitelist != null){
+            for ( String group : whitelist.split(",") ) {
+                LOG.debug("checking if pipeline group matches whitelist");
+                if ( strmatch(pipeline.group, group.trim()) ) return true;
+            }
+        }
+        return false;
+    }
+
+    private String getPipelinesWhitelist(PluginRequest pluginRequest, StageStatusRequest.Pipeline pipeline) {
+        try {
+            if(pipeline.stage.state.equals(STAGE_STATE_FAILED))
+                return pluginRequest.getPluginSettings().getFailedPipelinesWhitelist();
+            if(pipeline.stage.state.equals(STAGE_STATE_PASSED))
+                return pluginRequest.getPluginSettings().getPassedPipelinesWhitelist();
+            if(pipeline.stage.state.equals(STAGE_STATE_CANCELLED))
+                return pluginRequest.getPluginSettings().getCancelledPipelinesWhitelist();
+        }
+        catch(Exception ex) {
+            LOG.error(format("Failed to load whitelist for {0} pipelines", pipeline.stage.state), ex);
+            return DEFAULT_WHITELIST;
+        }
+        return DEFAULT_WHITELIST;
     }
 
     private Message onStageBuilding(StageStatusRequest.Pipeline pipeline) {
@@ -91,7 +113,7 @@ public class MessageBuilderService {
         return pipeline.name + "/" + pipeline.counter + "/" + pipeline.stage.name + "/" + pipeline.stage.counter;
     }
 
-    private Message onStageFailed(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
+    private Message onStageChanged(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
         String topText = getTopMessage(pipeline, pluginRequest);
         Message message = new Message(topText);
         Attachment buildAttachment = new Attachment();
@@ -99,11 +121,11 @@ public class MessageBuilderService {
         labelField.setShort(true);
         labelField.setTitle("Label");
         labelField.setValue(format("[{0}]({1})", pipeline.label, vsmFullUrl(pipeline, pluginRequest)));
-        // Failed jobs:
+        // Changed jobs:
         AttachmentField jobs = new AttachmentField();
-        jobs.setTitle("Failed Jobs");
-        String failedJobsText = getFailedJobsText(pipeline, pluginRequest);
-        jobs.setValue(failedJobsText);
+        jobs.setTitle(format("{0} Jobs", pipeline.stage.state));
+        String changedJobsText = getChangedJobsText(pipeline, pluginRequest);
+        jobs.setValue(changedJobsText);
 
         buildAttachment.setFields(new AttachmentField[] { labelField, jobs });
         message.addAttachment(buildAttachment);
@@ -111,7 +133,7 @@ public class MessageBuilderService {
         return  message;
     }
 
-    public String getFailedJobsText(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
+    public String getChangedJobsText(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
         List<Job> failedJobs = pipeline.stage.jobs.stream()
                 .filter(j -> "Failed".equals(j.result) || "Cancelled".equals(j.result))
                 .collect(Collectors.toList());
@@ -134,8 +156,45 @@ public class MessageBuilderService {
         return failedJobsText.toString();
     }
 
-
     public String getTopMessage(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
-        return String.format("Stage [%s](%s) has failed", stageRelativeUri(pipeline), stageFullUrl(pipeline, pluginRequest));
+        return String.format("Stage [%s](%s) has state: %s", stageRelativeUri(pipeline), stageFullUrl(pipeline, pluginRequest), pipeline.stage.state);
     }
+
+    // * --> Matches with 0 or more instances of any character or set of characters.
+    // ? --> Matches with any one character.
+    private static Boolean strmatch(String str, String pattern)
+    {
+        int n = str.length();
+        int m = pattern.length();
+
+        if (m == 0)
+            return (n == 0);
+ 
+        Boolean[][] lookup = new Boolean[n + 1][m + 1];
+ 
+        for (int i = 0; i < n + 1; i++)
+            Arrays.fill(lookup[i], false);
+ 
+        lookup[0][0] = true;
+ 
+        for (int j = 1; j <= m; j++)
+            if (pattern.charAt(j - 1) == '*')
+                lookup[0][j] = lookup[0][j - 1];
+ 
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
+            {
+                if (pattern.charAt(j - 1) == '*')
+                    lookup[i][j] = lookup[i][j - 1] || lookup[i - 1][j];
+ 
+                else if ( pattern.charAt(j - 1) == '?' || str.charAt(i - 1) == pattern.charAt(j - 1) )
+                    lookup[i][j] = lookup[i - 1][j - 1];
+                else
+                    lookup[i][j] = false;
+            }
+        }
+        return lookup[n][m];
+    }
+    
 }

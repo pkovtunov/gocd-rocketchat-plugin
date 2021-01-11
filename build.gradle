@@ -17,7 +17,7 @@
 apply plugin: 'java'
 
 group = 'cd.go.plugin.notification.rocketchat'
-version = '0.1.1'
+version = '0.1.2'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
@@ -25,7 +25,7 @@ project.ext.pluginDesc = [
         version    : project.version,
         goCdVersion: '18.3.0',
         name       : 'GoCD Rocketchat notification plugin',
-        description: 'Notification plugin that sends build failures to rocket chat',
+        description: 'Notification plugin that sends build status to rocket chat',
         vendorName : 'Tomasz Sętkowski',
         vendorUrl  : 'https://github.com/tomzo/gocd-rocketchat-plugin'
 ]

@@ -74,6 +74,24 @@ public class GetPluginConfigurationExecutorTest {
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
                 "    \"display-order\": \"4\"\n" +
+                "  },\n" +
+                "  \"passed_pipelines_whitelist\": {\n" +
+                "    \"display-name\": \"Notify about passed pipelines\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"5\"\n" +
+                "  },\n" +
+                "  \"failed_pipelines_whitelist\": {\n" +
+                "    \"display-name\": \"Notify about failed pipelines\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"6\"\n" +
+                "  },\n" +
+                "  \"cancelled_pipelines_whitelist\": {\n" +
+                "    \"display-name\": \"Notify about cancelled pipelines\",\n" +
+                "    \"required\": false,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"7\"\n" +
                 "  }\n" +
                 "}";
 

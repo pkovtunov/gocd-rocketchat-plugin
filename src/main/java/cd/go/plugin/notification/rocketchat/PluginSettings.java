@@ -47,6 +47,19 @@ public class PluginSettings {
     @SerializedName("room")
     private String room;
 
+    @Expose
+    @SerializedName("passed_pipelines_whitelist")
+    private String passedPipelinesWhitelist;
+
+    @Expose
+    @SerializedName("failed_pipelines_whitelist")
+    private String failedPipelinesWhitelist;
+
+    @Expose
+    @SerializedName("cancelled_pipelines_whitelist")
+    private String cancelledPipelinesWhitelist;
+
+
     public static PluginSettings fromJSON(String json) {
         return GSON.fromJson(json, PluginSettings.class);
     }
@@ -90,4 +103,27 @@ public class PluginSettings {
     public void setRoom(String room) {
         this.room = room;
     }
+
+    // Getters and setters for pipeline based notificsation rules
+
+    public String getPassedPipelinesWhitelist() {
+        return passedPipelinesWhitelist;
+    }
+    public String getFailedPipelinesWhitelist() {
+        return failedPipelinesWhitelist;
+    }
+    public String getCancelledPipelinesWhitelist() {
+        return cancelledPipelinesWhitelist;
+    }
+
+    public void setPassedPipelinesWhitelist(String passedPipelinesWhitelist) {
+        this.passedPipelinesWhitelist = passedPipelinesWhitelist;
+    }
+    public void setFailedPipelinesWhitelist(String failedPipelinesWhitelist) {
+        this.failedPipelinesWhitelist = failedPipelinesWhitelist;
+    }
+    public void setCancelledPipelinesWhitelist(String cancelledPipelinesWhitelist) {
+        this.cancelledPipelinesWhitelist = cancelledPipelinesWhitelist;
+    }
+
 }

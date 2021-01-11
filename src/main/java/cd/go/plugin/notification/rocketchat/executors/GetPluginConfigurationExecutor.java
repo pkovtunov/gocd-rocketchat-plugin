@@ -38,6 +38,12 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
     public static final Field API_KEY = new NonBlankField("api_key", "Rocketchat API password", null, true, false, "3");
     public static final Field ROOM = new NonBlankField("room", "Rocketchat room", null, true, false, "4");
 
+    // Pipeline config
+    public static final Field PASSED_PIPELINES = new Field("passed_pipelines_whitelist", "Notify about passed pipelines", null, false, false, "5");
+    public static final Field FAILED_PIPELINES = new Field("failed_pipelines_whitelist", "Notify about failed pipelines", null, false, false, "6");
+    public static final Field CANCELLED_PIPELINES = new Field("cancelled_pipelines_whitelist", "Notify about cancelled pipelines", null, false, false, "7");
+
+
     public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
 
     static {
@@ -48,6 +54,10 @@ public class GetPluginConfigurationExecutor implements RequestExecutor {
         FIELDS.put(API_KEY.key(), API_KEY);
 
         FIELDS.put(ROOM.key(), ROOM);
+
+        FIELDS.put(PASSED_PIPELINES.key(), PASSED_PIPELINES);
+        FIELDS.put(FAILED_PIPELINES.key(), FAILED_PIPELINES);
+        FIELDS.put(CANCELLED_PIPELINES.key(), CANCELLED_PIPELINES);
     }
 
     public GoPluginApiResponse execute() {

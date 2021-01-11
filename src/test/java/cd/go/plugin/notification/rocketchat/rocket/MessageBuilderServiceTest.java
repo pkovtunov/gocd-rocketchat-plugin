@@ -28,10 +28,15 @@ public class MessageBuilderServiceTest {
         pluginRequest = mock(PluginRequest.class);
         PluginSettings settings = new PluginSettings();
         settings.setGoServerUrl("http://go.ai-traders.com");
+        settings.setPassedPipelinesWhitelist("pipeline-group,*group1*, ");
+        settings.setFailedPipelinesWhitelist("*live*, *live?2*, *");
+        settings.setCancelledPipelinesWhitelist("pipeline-group,*group1*,*");
+
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
 
         pipeline = new StageStatusRequest.Pipeline();
         pipeline.name = "pipe";
+        pipeline.group = "pipeline-group-live02";
         pipeline.counter = "3";
         pipeline.label = "abc";
         pipeline.stage = new StageStatusRequest.Stage();
@@ -66,7 +71,7 @@ public class MessageBuilderServiceTest {
     @Test
     public void shouldBuildTopMessageWithLinkToStage() {
         String message = service.getTopMessage(pipeline, pluginRequest);
-        assertThat(message, is("Stage [pipe/3/stage/1](http://go.ai-traders.com/go/pipelines/pipe/3/stage/1) has failed"));
+        assertThat(message, is("Stage [pipe/3/stage/1](http://go.ai-traders.com/go/pipelines/pipe/3/stage/1) has state: Failed"));
     }
 
     @Test
@@ -80,7 +85,7 @@ public class MessageBuilderServiceTest {
 
     @Test
     public void shouldBuildFailedJobsText() {
-        String text = service.getFailedJobsText(pipeline, pluginRequest);
+        String text = service.getChangedJobsText(pipeline, pluginRequest);
         assertThat(text, is(" - [job1](http://go.ai-traders.com/go/tab/build/detail/pipe/3/stage/1/job1#tab-console) failed\n" +
         " - [job2](http://go.ai-traders.com/go/tab/build/detail/pipe/3/stage/1/job2#tab-console) was cancelled"));
     }

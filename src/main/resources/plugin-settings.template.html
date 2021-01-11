@@ -48,3 +48,20 @@ TODO: change this to your needs
   <input type="text" ng-model="room" ng-required="true"/>
   <span class="form_error" ng-show="GOINPUTNAME[room].$error.server">{{GOINPUTNAME[room].$error.server}}</span>
 </div>
+
+<div class="form_item_block">
+    <label>Passed pipeline groups whitelist:</label>
+    <input type="text" ng-model="passed_pipelines_whitelist" ng-required="false" placeholder="live-group, *live*, *"/>
+    <span class="form_error" ng-show="GOINPUTNAME[passed_pipelines_whitelist].$error.server">{{GOINPUTNAME[passed_pipelines_whitelist].$error.server}}</span>
+</div>
+<div class="form_item_block">
+    <label>Failed pipeline groups whitelist:</label>
+    <input type="text" ng-model="failed_pipelines_whitelist" ng-required="false" placeholder="live-group, *live*, *"/>
+    <span class="form_error" ng-show="GOINPUTNAME[failed_pipelines_whitelist].$error.server">{{GOINPUTNAME[failed_pipelines_whitelist].$error.server}}</span>
+</div>
+<div class="form_item_block">
+    <label>Cancelled pipeline groups whitelist:</label>
+    <input type="text" ng-model="cancelled_pipelines_whitelist" ng-required="false" placeholder="live-group, *live*, *"/>
+    <span class="form_error" ng-show="GOINPUTNAME[cancelled_pipelines_whitelist].$error.server">{{GOINPUTNAME[cancelled_pipelines_whitelist].$error.server}}</span>
+</div>
+
