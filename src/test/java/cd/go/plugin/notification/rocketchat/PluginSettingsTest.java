@@ -30,9 +30,9 @@ public class PluginSettingsTest {
                 "\"api_key\": \"p@ssw0rd\", " +
                 "\"room\": \"builds\", " +
                 "\"api_url\": \"https://cloud.example.com/api/v1\", " +
-                "\"passed_pipelines_whitelist\": \"pipeline-group, *group1*, *\", " +
-                "\"failed_pipelines_whitelist\": \"pipeline-group, *group1*, *\", " +
-                "\"cancelled_pipelines_whitelist\": \"pipeline-group, *group1*, *\" " +
+                "\"passed_pipelines_whitelist\": \"pipeline/live, */live, */*\", " +
+                "\"failed_pipelines_whitelist\": \"pipeline/live, */live, */*\", " +
+                "\"cancelled_pipelines_whitelist\": \"pipeline/live, */live, */*\" " +
                 "}");
 
         assertThat(pluginSettings.getGoServerUrl(), is("https://build.go.cd/go"));
@@ -40,8 +40,8 @@ public class PluginSettingsTest {
         assertThat(pluginSettings.getApiKey(), is("p@ssw0rd"));
         assertThat(pluginSettings.getRoom(), is("builds"));
         assertThat(pluginSettings.getApiUrl(), is("https://cloud.example.com/api/v1"));
-        assertThat(pluginSettings.getPassedPipelinesWhitelist(), is("pipeline-group, *group1*, *"));
-        assertThat(pluginSettings.getFailedPipelinesWhitelist(), is("pipeline-group, *group1*, *"));
-        assertThat(pluginSettings.getCancelledPipelinesWhitelist(), is("pipeline-group, *group1*, *"));
+        assertThat(pluginSettings.getPassedPipelinesWhitelist(), is("pipeline/live, */live, */*"));
+        assertThat(pluginSettings.getFailedPipelinesWhitelist(), is("pipeline/live, */live, */*"));
+        assertThat(pluginSettings.getCancelledPipelinesWhitelist(), is("pipeline/live, */live, */*"));
     }
 }

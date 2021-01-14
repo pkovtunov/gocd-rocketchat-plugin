@@ -11,3 +11,5 @@ build/
 !gradle-wrapper.jar
 
 data/
+
+container-prepare-script.sh

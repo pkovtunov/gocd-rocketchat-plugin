@@ -28,9 +28,9 @@ public class MessageBuilderServiceTest {
         pluginRequest = mock(PluginRequest.class);
         PluginSettings settings = new PluginSettings();
         settings.setGoServerUrl("http://go.ai-traders.com");
-        settings.setPassedPipelinesWhitelist("pipeline-group,*group1*, ");
-        settings.setFailedPipelinesWhitelist("*live*, *live?2*, *");
-        settings.setCancelledPipelinesWhitelist("pipeline-group,*group1*,*");
+        settings.setPassedPipelinesWhitelist("pipeline/live, */live, */*");
+        settings.setFailedPipelinesWhitelist("pipeline/live, */live, */*");
+        settings.setCancelledPipelinesWhitelist("pipeline/live, */live, */*");
 
         when(pluginRequest.getPluginSettings()).thenReturn(settings);
 

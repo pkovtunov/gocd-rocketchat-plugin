@@ -39,9 +39,13 @@ public class MessageBuilderService {
     private Boolean pipelineInWhitelist(StageStatusRequest.Pipeline pipeline, PluginRequest pluginRequest) {
         String whitelist = getPipelinesWhitelist(pluginRequest, pipeline);
         if (whitelist != null){
-            for ( String group : whitelist.split(",") ) {
-                LOG.debug("checking if pipeline group matches whitelist");
-                if ( strmatch(pipeline.group, group.trim()) ) return true;
+            for ( String pipeline_and_stage : whitelist.split(",") ) {
+                LOG.debug("checking if pipeline matches whitelist");
+                String[] pipeline_and_stage_array = pipeline_and_stage.trim().split("/");
+                if ( pipeline_and_stage_array.length < 2 ) return false;
+                String pipeline_pattern = pipeline_and_stage_array[0];
+                String stage_pattern = pipeline_and_stage_array[1];
+                if ( strmatch(pipeline.name, pipeline_pattern) && strmatch(pipeline.stage.name, stage_pattern)) return true;
             }
         }
         return false;
