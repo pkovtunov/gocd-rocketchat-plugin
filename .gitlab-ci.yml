@@ -1,0 +1,16 @@
+image: "internal/mamido/ci-runner-base:buster"
+
+stages: [build]
+
+variables:
+  PLUGIN_VERSION: "0.1.2"
+  PACKAGE_GLOB: "build/libs/*.jar"
+
+build_jar:
+  stage: build
+  script:
+    - ./gradlew clean test jar
+  artifacts:
+    expire_in: 2 weeks
+    paths:
+      - $PACKAGE_GLOB
