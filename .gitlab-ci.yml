@@ -9,6 +9,7 @@ variables:
 build_jar:
   stage: build
   script:
+    - ui_proxy_on
     - ./gradlew clean test jar
   artifacts:
     expire_in: 2 weeks
