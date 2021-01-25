@@ -10,7 +10,7 @@ build_jar:
   stage: build
   script:
     - ui_proxy_on
-    - ./gradlew clean test jar
+    - https_proxy='http://itproxy.1and1.org:3128' http_proxy='http://itproxy.1and1.org:3128' ./gradlew clean test jar
   artifacts:
     expire_in: 2 weeks
     paths:
