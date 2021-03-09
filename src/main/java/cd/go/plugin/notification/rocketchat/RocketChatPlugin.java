@@ -32,6 +32,7 @@ import com.thoughtworks.go.plugin.api.exceptions.UnhandledRequestTypeException;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 
 @Extension
 public class RocketChatPlugin implements GoPlugin {
@@ -77,6 +78,8 @@ public class RocketChatPlugin implements GoPlugin {
                     return new GetPluginConfigurationExecutor().execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
                     return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
+                case PLUGIN_SETTINGS_CHANGED:
+                    return new DefaultGoPluginApiResponse(DefaultGoPluginApiResponse.SUCCESS_RESPONSE_CODE, "{}");
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

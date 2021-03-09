@@ -28,7 +28,8 @@ public enum Request {
     // settings related requests that the server makes to the plugin
     PLUGIN_SETTINGS_GET_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-configuration"),
     PLUGIN_SETTINGS_GET_VIEW(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".get-view"),
-    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),;
+    PLUGIN_SETTINGS_VALIDATE_CONFIGURATION(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".validate-configuration"),
+    PLUGIN_SETTINGS_CHANGED(Constants.GO_PLUGIN_SETTINGS_PREFIX + ".plugin-settings-changed"),;
 
     private final String requestName;
 
