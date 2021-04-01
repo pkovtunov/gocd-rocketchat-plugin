@@ -117,9 +117,10 @@ public class RocketChatClientCallBuilder {
 
     private void login() throws IOException {
         HttpResponse<JsonNode> loginResult;
+        String[] ldap_options = {};
 
         try {
-            loginResult = Unirest.post(serverUrl + "v1/login").field("username", user).field("password", password).asJson();
+            loginResult = Unirest.post(serverUrl + "v1/login").field("username", user).field("ldapPass", password).field("ldap", true).field("ldapOptions", ldap_options).asJson();
         } catch (UnirestException e) {
             throw new IOException(e);
         }
